@@ -1,0 +1,1 @@
+int loadObj(char* file, float** vecs, float** uvs, float** normals);
