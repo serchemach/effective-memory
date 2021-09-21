@@ -114,8 +114,10 @@ int loadObj(char* file, float** vecs, float** uvs, float** normals) {
 		
 		if(strstr(line, "v ") == line) {
 			loader.verts = loadVertex(line, loader.verts);
+			loader.verts[cvector_size(loader.verts) - 1] *= -1; //z fix
 		} else if(strstr(line, "vt ") == line) {
 			loader.uvs = loadVertex(line, loader.uvs);
+			loader.uvs[cvector_size(loader.uvs) - 1] = 1 - loader.uvs[cvector_size(loader.uvs) - 1]; //v tex coord fix
 		} else if(strstr(line, "vn ") == line) {
 			loader.norms = loadVertex(line, loader.norms);
 		} else if(strstr(line, "f ") == line) {
@@ -130,11 +132,6 @@ int loadObj(char* file, float** vecs, float** uvs, float** normals) {
 	cvector_free(loader.verts);
 	cvector_free(loader.uvs);
 	cvector_free(loader.norms);
-	
-	printf("%d\n", (int) cvector_size(loader.modelVerts));
-	for(size_t i=0; i<cvector_size(loader.modelVerts); i++) {
-		printf("%f\n", loader.modelVerts[i]);
-	}
 	
 	*vecs = loader.modelVerts;
 	*uvs = loader.modelUvs;
