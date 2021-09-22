@@ -23,10 +23,9 @@ void RenderButton(SDL_Renderer* renderer, Button* button)
     SDL_RenderDrawRect(renderer, &button->rect);
 }
 
-void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDown)
+void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDown, int mouseLeftUp)
 {
     button->isActive = 0;
-    button->isPressed = 0;
     if (button->rect.x <= mousePosX && mousePosX <= button->rect.x + button->rect.w &&
         button->rect.y <= mousePosY && mousePosY <= button->rect.y + button->rect.h)
     {
@@ -34,6 +33,8 @@ void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDow
         if(mouseLeftDown == 1)
             button->isPressed = 1;
     }
+    if (mouseLeftUp == 1)
+        button->isPressed = 0;
     
     if (button->isPressed == 1 && button -> brightness > 80)
         button -> brightness -= 0.2;

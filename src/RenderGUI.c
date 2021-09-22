@@ -13,12 +13,13 @@ void startRender()
 
     SDL_Event event;
 	int running = 1;
-    int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0;
+    int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0;
     while (running)
     {
         SDL_SetRenderDrawColor(renderer, BG_BRIGHTNESS, BG_BRIGHTNESS, BG_BRIGHTNESS, 255);
         SDL_RenderClear(renderer);
-
+        mouseLeftDown = 0;
+        mouseLeftUp = 0;
         while (SDL_PollEvent(&event))
     	{
             switch (event.type)
@@ -36,12 +37,12 @@ void startRender()
                     break;
                 case SDL_MOUSEBUTTONUP:
                     if (event.button.button == SDL_BUTTON_LEFT)
-                        mouseLeftDown = 0;
+                        mouseLeftUp = 1;
                     break;
             }
         }
-        printf("%d\n", mouseLeftDown);
-        UpdateButton(&testButton, mousePosX, mousePosY, mouseLeftDown);
+        
+        UpdateButton(&testButton, mousePosX, mousePosY, mouseLeftDown, mouseLeftUp);
         RenderButton(renderer, &testButton);
 
         SDL_RenderPresent(renderer);
