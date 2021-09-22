@@ -14,9 +14,24 @@ Button CreateButton(SDL_Renderer* renderer, int xPos, int yPos, int width, int h
     result.brightness = BASE_BRIGHTNESS;
     
     SDL_Color textColor = {0, 0, 0};
-    TTF_Font* Arial = TTF_OpenFont("C:/windows/fonts/Arial.ttf", 100);
-    SDL_Surface* tSurf = TTF_RenderText_Blended(Arial, text, textColor);
-    
+    TTF_Font* font = TTF_OpenFont("C:/windows/fonts/Calibri.ttf", min(width, height));
+    SDL_Surface* tSurf = TTF_RenderText_Blended(font, text, textColor);
+
+    if((float)tSurf->w / width > (float)tSurf->h / height)
+    {
+        result.textRect.w = width;
+        result.textRect.h = (int)((float)(tSurf->h * width) / tSurf->w);
+        result.textRect.y = yPos + (height - result.textRect.h) / 2;
+        result.textRect.x = xPos + (width - result.textRect.w) / 2;
+    }
+    else
+    {
+        result.textRect.h = height;
+        result.textRect.w = (int)((float)(tSurf->w * height) / tSurf->h);
+        result.textRect.x = xPos + (width - result.textRect.w) / 2;
+        result.textRect.y = yPos + (height - result.textRect.h) / 2;
+    }
+
     result.textTexture = SDL_CreateTextureFromSurface(renderer, tSurf);
     return result;
 }
@@ -26,10 +41,10 @@ void RenderButton(SDL_Renderer* renderer, Button* button)
     SDL_SetRenderDrawColor(renderer, (int)button->brightness, (int)button->brightness, (int)button->brightness, 255);
     SDL_RenderFillRect(renderer, &button->rect);
 
-    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+    SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
     SDL_RenderDrawRect(renderer, &button->rect);
 
-    SDL_RenderCopy(renderer, button->textTexture, NULL, &button->rect);
+    SDL_RenderCopy(renderer, button->textTexture, NULL, &button->textRect);
 }
 
 void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDown, int mouseLeftUp)
@@ -55,4 +70,11 @@ void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDow
         button->brightness += 0.2;
     else if (button->isActive == 0 && button->brightness < BASE_BRIGHTNESS)
         button->brightness += 0.1;
+}
+
+int min(int x, int y)
+{
+    if (x > y)
+        return y;
+    return x;
 }

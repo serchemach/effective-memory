@@ -10,12 +10,13 @@ void startRender()
     SDL_Window* win; SDL_Renderer* renderer;
     InitialiseRender(xres, yres, &win, &renderer);
 
-    char* sampleText = "1";
+    char* sampleText = "*";
     Button testButton = CreateButton(renderer, 10, 10, 100, 100, sampleText);
 
     SDL_Event event;
 	int running = 1;
     int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0;
+    printf("123\n");
     while (running)
     {
         SDL_SetRenderDrawColor(renderer, BG_BRIGHTNESS, BG_BRIGHTNESS, BG_BRIGHTNESS, 255);
