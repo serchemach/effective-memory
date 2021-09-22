@@ -7,6 +7,7 @@ Button CreateButton(int xPos, int yPos, int width, int height, char* text)
     result.rect.x = xPos; result.rect.y = yPos;
     
     result.isActive = 0;
+    result.isPressed = 0;
     result.text = text;
     result.brightness = BASE_BRIGHTNESS;
     
@@ -22,21 +23,24 @@ void RenderButton(SDL_Renderer* renderer, Button* button)
     SDL_RenderDrawRect(renderer, &button->rect);
 }
 
-void UpdateButton(Button* button, int mousePosX, int mousePosY)
+void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDown)
 {
     button->isActive = 0;
+    button->isPressed = 0;
     if (button->rect.x <= mousePosX && mousePosX <= button->rect.x + button->rect.w &&
         button->rect.y <= mousePosY && mousePosY <= button->rect.y + button->rect.h)
     {
         button->isActive = 1;
+        if(mouseLeftDown == 1)
+            button->isPressed = 1;
     }
     
-    if (button->isActive == 1 && button->brightness > 100)
-    {
+    if (button->isPressed == 1 && button -> brightness > 80)
+        button -> brightness -= 0.2;
+    else if (button->isActive == 1 && button->brightness > 100)
         button->brightness -= 0.1;
-    }
-    else if (button->isActive == 0 && button->brightness < BASE_BRIGHTNESS)
-    {
+    else if (button->isActive == 1 && button->brightness < 100)
         button->brightness += 0.1;
-    }
+    else if (button->isActive == 0 && button->brightness < BASE_BRIGHTNESS)
+        button->brightness += 0.1;
 }
