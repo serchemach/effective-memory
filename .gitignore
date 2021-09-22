@@ -1,6 +1,7 @@
 # VSCode files
 .vscode/launch.json
 .vscode/tasks.json
+.vscode/settings.json
 
 # Build files
 *.o
