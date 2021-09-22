@@ -1,6 +1,7 @@
 #include "RenderGUI.h"
 #include "stdio.h"
 #include "SDL2/SDL.h"
+#include "SDL_TTF/SDL_ttf.h"
 #include "Button.h"
 
 void startRender()
@@ -9,7 +10,8 @@ void startRender()
     SDL_Window* win; SDL_Renderer* renderer;
     InitialiseRender(xres, yres, &win, &renderer);
 
-    Button testButton = CreateButton(10, 10, 100, 100, NULL);
+    char* sampleText = "1";
+    Button testButton = CreateButton(renderer, 10, 10, 100, 100, sampleText);
 
     SDL_Event event;
 	int running = 1;
@@ -53,6 +55,13 @@ void startRender()
 
 void InitialiseRender(int xres, int yres, SDL_Window** rWin, SDL_Renderer** rRenderer)
 {
+    // I'm sorry for this function
+    if(TTF_Init() != 0)
+    {  
+        printf("TTF not initialised\n");
+        exit(1);
+    }
+
     SDL_Window* win = SDL_CreateWindow("QuCalc", 100, 100, xres, yres, SDL_WINDOW_HIDDEN);
 
     SDL_Renderer* renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
@@ -63,6 +72,8 @@ void InitialiseRender(int xres, int yres, SDL_Window** rWin, SDL_Renderer** rRen
     SDL_ShowWindow(win);
     SDL_RenderPresent(renderer);
     *rWin = win; *rRenderer = renderer;
+
+
 }
  
 void ExitRender(SDL_Window* win)
