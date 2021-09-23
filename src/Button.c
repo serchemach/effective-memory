@@ -2,6 +2,8 @@
 #include "SDL_TTF/SDL_ttf.h"
 #include "stdio.h"
 #include "Utils.h"
+#include "stdlib.h"
+#include "string.h"
 
 Button CreateButton(SDL_Renderer* renderer, int xPos, int yPos, int width, int height, char* text)
 {
@@ -11,7 +13,9 @@ Button CreateButton(SDL_Renderer* renderer, int xPos, int yPos, int width, int h
 
     result.isActive = 0;
     result.isPressed = 0;
-    result.text = text;
+
+    result.text = malloc(sizeof(char) * 10);
+    result.text = strcpy(result.text, text);
     result.brightness = BASE_BRIGHTNESS;
     
     result.textTexture = CreateTextTexture(renderer, min(height, width), text);
@@ -51,6 +55,7 @@ void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDow
 {
     // Change button state according to mouse position and button presses
     button->isActive = 0;
+    button->isTriggering = 0;
     if (button->rect.x <= mousePosX && mousePosX <= button->rect.x + button->rect.w &&
         button->rect.y <= mousePosY && mousePosY <= button->rect.y + button->rect.h)
     {
@@ -58,9 +63,11 @@ void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDow
         if(mouseLeftDown == 1)
             button->isPressed = 1;
     }
-    if (mouseLeftUp == 1)
+    if (button->isPressed == 1 && mouseLeftUp == 1)
+    {
         button->isPressed = 0;
-    
+        button->isTriggering = 1;
+    }
     // Change button color according to state
     if (button->isPressed == 1 && button -> brightness > 80)
         button->brightness -= 1.5;

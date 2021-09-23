@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
 
 #include "GL/glew.h"
@@ -11,6 +12,7 @@
 #include "Button.h"
 #include "TextBox.h"
 #include "Utils.h"
+#include "quaternion.h"
  
 void startRender()
 {
@@ -23,7 +25,25 @@ void startRender()
 	loadPreviewModel("mdl.obj");
 	loadPreviewTexture("test.gif");
 
-    int numberOfButtons = 10;
+    struct Quaternion resultQuaternion = Quaternion_new(0, 0, 0, 0);
+    struct Quaternion additonalQuaternion = Quaternion_new(0, 0, 0, 0);
+
+    // Create textBoxes
+    TextBox resultQTextBoxes[4];
+    TextBox additionalQTextBoxes[4];
+    for (int i = 0; i < 4; ++i)
+    {
+        resultQTextBoxes[i] = CreateTextBox(renderer, (int)((float)(i + 1)*xres / 16 + (float)i*xres/7),
+        (int)((float)yres / 20), (int)((float)xres/5), (int)((float)yres / 10), "0");
+
+        additionalQTextBoxes[i] = CreateTextBox(renderer, (int)((float)(i + 1)*xres / 16 + (float)i*xres/7),
+        (int)((float)yres / 5), (int)((float)xres/5), (int)((float)yres / 10), "0");
+    }
+    TextBox* activeTextBox = &resultQTextBoxes[0];
+    resultQTextBoxes[0].isUsed = 1;
+
+    Button* activeButton = NULL;
+    int numberOfButtons = 16;
     Button guiButtons[numberOfButtons];
     // Create digits
     for (int i = 1; i < 10; ++i)
@@ -39,10 +59,27 @@ void startRender()
         500 - (int)((float)2 / 16 + (float)yres / 7),
         (float)xres * 11 / 64, (float)yres / 7, "0");
     
+    // Create operators
+    char* tString = "+-*^";
+    for (int i = 10; i < 14; ++i)
+    {
+        char tempStr[2];
+        tempStr[0] = tString[i - 10];
+        tempStr[1] = '\0';
+        guiButtons[i] = CreateButton(renderer, (int)((float)3 / 8 + (float)xres * 33 / 64), 
+            500 - (int)((float)((i - 10) + 2) / 16 + (float)(i - 9) * yres / 7), 
+            (float)xres * 11 / 64, (float)yres / 7, tempStr);
+    }
+    guiButtons[14] = CreateButton(renderer, (int)((float) 6 / 16 + (float)xres * 11 / 32), 
+            500 - (int)((float)2 / 16 + (float)yres / 7),
+            (float)xres * 11 / 64, (float)yres / 7, ".");
+    guiButtons[15] = CreateButton(renderer, (int)((float) 6 / 16), 
+            500 - (int)((float)2 / 16 + (float)yres / 7),
+            (float)xres * 11 / 64, (float)yres / 7, "+-");
 
 
     // Button testButton = CreateButton(renderer, 10, 10, 100, 100, "1");
-    TextBox testTBox = CreateTextBox(renderer, 20, 20, 100, 60, "134567");
+    //TextBox testTBox = CreateTextBox(renderer, 20, 20, 100, 60, "134567");
 
     SDL_Event event;
 	int running = 1;
@@ -89,14 +126,90 @@ void startRender()
         // UpdateButton(&testButton, mousePosX, mousePosY, mouseLeftDown, mouseLeftUp);
         // RenderButton(renderer, &testButton);
 
+        // Update the buttons and determine the active one
         for (int i = 0; i < numberOfButtons; ++i)
         {
             UpdateButton(&guiButtons[i], mousePosX, mousePosY, mouseLeftDown, mouseLeftUp);
+
+            if (guiButtons[i].isTriggering == 1)
+                activeButton = &guiButtons[i];
             RenderButton(renderer, &guiButtons[i]);
         }
+        if (activeButton != NULL && activeButton->isTriggering == 0)
+            activeButton = NULL;
+        
+        // Poll buttons
+        if(activeButton != NULL)
+        {
+            printf("%s\n", activeButton->text);
+            if (activeButton->text == "+-")
+            {
+                if (activeTextBox->text[0] == '-')
+                    lastKeyCode = '+';
+                else
+                    lastKeyCode = '-';
+            }
+            else if ((activeButton->text[0] <= 57 && activeButton->text[0] >= 48) || 
+                    activeButton->text[0] == '.')
+                lastKeyCode = activeButton->text[0];
+            else
+            {
+                switch(activeButton->text[0])
+                {
+                    case '+':
+                        resultQuaternion = Quaternion_addQuaternion(resultQuaternion, additonalQuaternion);
+                        break;
+                    case '-':
+                        resultQuaternion = Quaternion_subQuaternion(resultQuaternion, additonalQuaternion);
+                        break;
+                    case '*':
+                        resultQuaternion = Quaternion_mulQuaternion(resultQuaternion, additonalQuaternion);
+                        break;
+                    case '^':
+                        resultQuaternion = Quaternion_exp(resultQuaternion);
+                        break;
+                }
+                if (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || activeButton->text[0] == '^')
+                {
+                    char tmp[50];
+                    sprintf(tmp, "%g", resultQuaternion.x);
+                    UpdateTextBoxText(renderer, &resultQTextBoxes[0], tmp);
 
-        UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
-        RenderTextBox(renderer, testTBox);
+                    sprintf(tmp, "%g", resultQuaternion.y);
+                    UpdateTextBoxText(renderer, &resultQTextBoxes[1], tmp);
+
+                    sprintf(tmp, "%g", resultQuaternion.z);
+                    UpdateTextBoxText(renderer, &resultQTextBoxes[2], tmp);
+
+                    sprintf(tmp, "%g", resultQuaternion.w);
+                    UpdateTextBoxText(renderer, &resultQTextBoxes[3], tmp);
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            UpdateTextBox(renderer, &resultQTextBoxes[i], mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
+            if (resultQTextBoxes[i].isUsed == 1 && activeTextBox != &resultQTextBoxes[i])
+            {
+                activeTextBox->isUsed = 0;
+                activeTextBox = &resultQTextBoxes[i];
+            }
+            if (activeButton != NULL && (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || activeButton->text[0] == '^'))
+                resultQTextBoxes[i].brightness += 3;
+            RenderTextBox(renderer, resultQTextBoxes[i]);
+
+            UpdateTextBox(renderer, &additionalQTextBoxes[i], mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
+            if (additionalQTextBoxes[i].isUsed == 1 && activeTextBox != &additionalQTextBoxes[i])
+            {
+                activeTextBox->isUsed = 0;
+                activeTextBox = &additionalQTextBoxes[i];
+            }
+            RenderTextBox(renderer, additionalQTextBoxes[i]);
+        }
+
+        // UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
+        // RenderTextBox(renderer, testTBox);
 
         SDL_RenderPresent(renderer);
         //SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);

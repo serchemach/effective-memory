@@ -6,7 +6,7 @@ struct Quaternion
   float w;
 };
 
-struct Quaternion Quaternion_create(float x, float y, float z, float w);
+struct Quaternion Quaternion_new(float x, float y, float z, float w);
 struct Quaternion Quaternion_conj(struct Quaternion quaternion_1);
 float Quaternion_mod(struct Quaternion quaternion_1);
 void Quaternion_toRotationMatrix(struct Quaternion quaternion, float rotationmatrix[3][3]);
