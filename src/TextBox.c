@@ -4,6 +4,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "Utils.h"
+#include "math.h"
 
 TextBox CreateTextBox(SDL_Renderer* renderer, int xPos, int yPos, int width, int height, char* text)
 {
@@ -29,7 +30,7 @@ TextBox CreateTextBox(SDL_Renderer* renderer, int xPos, int yPos, int width, int
 void RenderTextBox(SDL_Renderer* renderer, TextBox tBox)
 {
     // Draw the main body of tBox
-    SDL_SetRenderDrawColor(renderer, (int)tBox.brightness, (int)tBox.brightness, (int)tBox.brightness, 255);
+    SDL_SetRenderDrawColor(renderer, roundf(tBox.brightness), roundf(tBox.brightness), roundf(tBox.brightness), 255);
     SDL_RenderFillRect(renderer, &tBox.rect);
     
     // Draw the outline
@@ -74,14 +75,17 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
             SDL_QueryTexture(tBox->textTexture, NULL, NULL, &tWidth, &tHeight);
             if (tBox->textFRect.x < tWidth - tBox->textFRect.w)
                 tBox->textFRect.x += 1;
-            else if (tBox->textFRect.x > tWidth - tBox->textFRect.w)
+            else if (tBox->textFRect.x > tWidth - tBox->textFRect.w + 1)
                 tBox->textFRect.x -= 1;
 
             // Poll the keys
             if (backspacePressed == 1 && tBox->curTextSize > 0)
             {
                 tBox->curTextSize--;
-                *(tBox->text + tBox->curTextSize) = '\0';
+                if (tBox->curTextSize == 0)
+                    *(tBox->text + tBox->curTextSize) = ' ';
+                else
+                    *(tBox->text + tBox->curTextSize) = '\0';
 
                 // Update the text texture
                 UpdateTextBoxTextTexture(renderer, tBox);
