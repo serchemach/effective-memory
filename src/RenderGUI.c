@@ -1,12 +1,12 @@
 #include "stdio.h"
 #include "string.h"
 
+#include "GL/glew.h"
 #include "SDL2/SDL.h"
 #include "SDL_TTF/SDL_ttf.h"
-#include "SDL2/SDL_opengl.h"
-#include <GL/gl.h>
 
 #include "RenderGUI.h"
+#include "RenderGL.h"
 #include "Button.h"
 #include "TextBox.h"
 #include "Utils.h"
@@ -17,6 +17,8 @@ void startRender()
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
 	SDL_GLContext glcontext = (SDL_GLContext) {0};
     InitialiseRender(xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
+	
+	startGLRender(renderSurface);
 
     int numberOfButtons = 10;
     Button guiButtons[numberOfButtons];
@@ -93,19 +95,18 @@ void startRender()
         UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
         RenderTextBox(renderer, testTBox);
 
-        // SDL_RenderPresent(renderer);
-        SDL_UnlockSurface(windowSurface); SDL_UnlockSurface(renderSurface);
-        
-        SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
+        SDL_RenderPresent(renderer);
+        //SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
 		
-		//just testing
-		glClearColor(0,0,0,1);
-		glClear(GL_COLOR_BUFFER_BIT);
+        SDL_LockSurface(renderSurface);
+		renderGL(xres, yres, renderSurface, 0, 0);
+        SDL_UnlockSurface(renderSurface);
 		
-        SDL_UpdateWindowSurface(win);
+        //SDL_UpdateWindowSurface(win);
 		SDL_GL_SwapWindow(win);
     }   
 
+	destroyGLRender();
     ExitRender(win, glcontext);
 }
 
@@ -119,19 +120,34 @@ void InitialiseRender(int xres, int yres,
         printf("TTF not initialised\n");
         exit(1);
     }
+	
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
+	
+	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
-    SDL_Window* win = SDL_CreateWindow("QuCalc", 100, 100, xres, yres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
+    SDL_Window* win = SDL_CreateWindow("QuCalc", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, xres, yres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
+	
+	SDL_GLContext glcontext = SDL_GL_CreateContext(win);
+	SDL_GL_MakeCurrent(win, glcontext);
+	if(glewInit() != GLEW_OK) {
+		printf("GLEW not initialised\n");
+        exit(1);
+	}
+
     SDL_Surface* windowSurface = SDL_GetWindowSurface(win);
-
     SDL_Surface* renderSurface = SDL_CreateRGBSurfaceWithFormat(0, xres, yres, 32, SDL_PIXELFORMAT_RGBA32);
     SDL_Renderer* renderer = SDL_CreateSoftwareRenderer(renderSurface);
     
     SDL_SetRenderDrawColor(renderer, BG_BRIGHTNESS, BG_BRIGHTNESS, BG_BRIGHTNESS, 255);
     SDL_RenderClear(renderer);
-	
-	SDL_GLContext glcontext = SDL_GL_CreateContext(win);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4);
 
     SDL_ShowWindow(win);
     SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
