@@ -8,3 +8,9 @@ SDL_Texture* CreateTextTexture(SDL_Renderer* renderer, int fontSize, char* text)
     SDL_Surface* tSurf = TTF_RenderText_Blended(font, text, textColor);
     return SDL_CreateTextureFromSurface(renderer, tSurf);
 }
+
+int min(int x, int y)
+{
+    return x > y ?y :x;
+}
+

@@ -15,6 +15,7 @@ TextBox CreateTextBox(SDL_Renderer* renderer, int xPos, int yPos, int width, int
     result.brightness = TBOX_BASE_BRIGHTNESS;
     result.isActive = 0;
     result.isUsed = 0;
+    result.hasADot = 0;
 
     result.text = malloc(sizeof(char) * TBOX_TEXT_LENGTH);
     result.text = strcpy(result.text, text);
@@ -82,6 +83,9 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
             if (backspacePressed == 1 && tBox->curTextSize > 0)
             {
                 tBox->curTextSize--;
+                if (*(tBox->text + tBox->curTextSize) == '.')
+                    tBox->hasADot = 0;
+
                 if (tBox->curTextSize == 0)
                     *(tBox->text + tBox->curTextSize) = ' ';
                 else
@@ -90,8 +94,11 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
                 // Update the text texture
                 UpdateTextBoxTextTexture(renderer, tBox);
             }
-            else if (lastChar <= 57 && lastChar >= 48 && tBox->curTextSize < TBOX_TEXT_LENGTH)
+            else if (((lastChar <= 57 && lastChar >= 48) || (lastChar == '.' && tBox->hasADot == 0)) && tBox->curTextSize < TBOX_TEXT_LENGTH)
             {
+                if(lastChar == '.')
+                    tBox->hasADot = 1;
+
                 *(tBox->text + tBox->curTextSize) = lastChar;
                 tBox->curTextSize++;
                 *(tBox->text + tBox->curTextSize) = '\0';

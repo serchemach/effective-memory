@@ -8,6 +8,7 @@ struct TextBox{
     float brightness;
     int isActive;
     int isUsed;
+    int hasADot;
     char* text;
     int curTextSize;
     SDL_Texture* textTexture;

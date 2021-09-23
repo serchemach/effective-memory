@@ -16,4 +16,3 @@ typedef struct Button Button;
 Button CreateButton(SDL_Renderer* renderer, int xPos, int yPos, int width, int height, char* text);
 void RenderButton(SDL_Renderer* renderer, Button* button);
 void UpdateButton(Button* button, int mousePosX, int mousePoxY, int mouseLeftDown, int mouseLeftUp);
-int min(int x, int y);
