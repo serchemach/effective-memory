@@ -46,8 +46,6 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
 {
     // Determine the state
     tBox->isActive = 0;
-    if (mouseLeftDown == 1)
-        tBox->isUsed = 0;
 
     if (tBox->rect.x + tBox->rect.w >= mousePosX && tBox->rect.x <= mousePosX &&
         tBox->rect.y + tBox->rect.h >= mousePosY && tBox->rect.y <= mousePosY)

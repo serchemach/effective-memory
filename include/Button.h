@@ -6,6 +6,7 @@ struct Button{
     SDL_Rect rect;
     int isActive;
     int isPressed;
+    int isTriggering;
     char* text;
     float brightness;
     SDL_Texture* textTexture;
