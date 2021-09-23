@@ -40,7 +40,7 @@ void RenderTextBox(SDL_Renderer* renderer, TextBox tBox)
     SDL_RenderCopy(renderer, tBox.textTexture, &tBox.textFRect, &tBox.textDRect);
 }
 
-void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mousePosY, int mouseLeftDown, int keyScanCode)
+void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mousePosY, int mouseLeftDown, char lastChar, int backspacePressed)
 {
     // Determine the state
     tBox->isActive = 0;
@@ -67,7 +67,6 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
 
     // Do the keys polling and text texture shift adjustment    
     int tWidth, tHeight, pressedDigit;
-    char addedChar = 0;
     switch(tBox->isUsed)
     {
         case 1:
@@ -75,21 +74,24 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
             SDL_QueryTexture(tBox->textTexture, NULL, NULL, &tWidth, &tHeight);
             if (tBox->textFRect.x < tWidth - tBox->textFRect.w)
                 tBox->textFRect.x += 1;
+            else if (tBox->textFRect.x > tWidth - tBox->textFRect.w)
+                tBox->textFRect.x -= 1;
 
             // Poll the keys
-            if (keyScanCode <= 39 && keyScanCode >= 30)
+            if (backspacePressed == 1 && tBox->curTextSize > 0)
             {
-                pressedDigit = (keyScanCode - 29) % 10;
-                addedChar = 48 + pressedDigit;
+                tBox->curTextSize--;
+                *(tBox->text + tBox->curTextSize) = '\0';
+
+                // Update the text texture
+                UpdateTextBoxTextTexture(renderer, tBox);
             }
-            
-            if (addedChar != 0 && tBox->curTextSize < TBOX_TEXT_LENGTH)
+            else if (lastChar <= 57 && lastChar >= 48 && tBox->curTextSize < TBOX_TEXT_LENGTH)
             {
-                *(tBox->text + tBox->curTextSize) = addedChar;
+                *(tBox->text + tBox->curTextSize) = lastChar;
                 tBox->curTextSize++;
                 *(tBox->text + tBox->curTextSize) = '\0';
            
-                printf("%s \n", tBox->text);
                 // Update the text texture
                 UpdateTextBoxTextTexture(renderer, tBox);
             }

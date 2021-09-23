@@ -17,7 +17,7 @@ void startRender()
 
     SDL_Event event;
 	int running = 1;
-    int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0, lastKeyCode = 0;
+    int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0, lastKeyCode = 0, backspacePressed = 0;
     printf("123\n");
     while (running)
     {
@@ -26,6 +26,7 @@ void startRender()
         mouseLeftDown = 0;
         mouseLeftUp = 0;
         lastKeyCode = 0;
+        backspacePressed = 0;
 
         while (SDL_PollEvent(&event))
     	{
@@ -46,14 +47,18 @@ void startRender()
                     if (event.button.button == SDL_BUTTON_LEFT)
                         mouseLeftUp = 1;
                     break;
+                case SDL_TEXTINPUT:
+                    lastKeyCode = event.text.text[0];
+                    break;
                 case SDL_KEYDOWN:
-                    lastKeyCode = event.key.keysym.scancode;
+                    if (event.key.keysym.sym == SDLK_BACKSPACE)
+                        backspacePressed = 1;
                     break;
             }
         }
         
         UpdateButton(&testButton, mousePosX, mousePosY, mouseLeftDown, mouseLeftUp);
-        UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode);
+        UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
 
         RenderTextBox(renderer, testTBox);
         RenderButton(renderer, &testButton);
