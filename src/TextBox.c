@@ -58,14 +58,20 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
     }
     
     // Adjust brightness for the current frame
-    if (tBox->isUsed == 1 && tBox->brightness > 50)
-        tBox->brightness -= 0.2;
-    else if (tBox->isActive == 1 && tBox->brightness > 60)
-        tBox->brightness -= 0.1;
-    else if (tBox->isActive == 1 && tBox->brightness < 60)
-        tBox->brightness += 0.2;
-    else if (tBox->isActive == 0 && tBox->brightness < TBOX_BASE_BRIGHTNESS)
-        tBox->brightness += 0.1;
+    if (tBox->isUsed == 1)
+    {
+        if (tBox->brightness > 50)
+            tBox->brightness -= 1;
+    }
+    else 
+    {   
+        if (tBox->isActive == 1 && tBox->brightness > 60)
+            tBox->brightness -= 0.6;
+        else if (tBox->isActive == 1 && 60 - tBox->brightness > 1)
+            tBox->brightness += 1;
+        else if (tBox->isActive == 0 && tBox->brightness < TBOX_BASE_BRIGHTNESS)
+            tBox->brightness += 0.6;
+    }
 
     // Do the keys polling and text texture shift adjustment    
     int tWidth, tHeight, pressedDigit;
