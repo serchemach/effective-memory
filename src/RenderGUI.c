@@ -3,6 +3,7 @@
 
 #include "GL/glew.h"
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 #include "SDL_TTF/SDL_ttf.h"
 
 #include "RenderGUI.h"
@@ -19,6 +20,8 @@ void startRender()
     InitialiseRender(xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
 	
 	startGLRender(renderSurface);
+	loadPreviewModel("mdl.obj");
+	loadPreviewTexture("test.gif");
 
     int numberOfButtons = 10;
     Button guiButtons[numberOfButtons];
@@ -121,6 +124,8 @@ void InitialiseRender(int xres, int yres,
         exit(1);
     }
 	
+	IMG_Init(0);
+	
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	
@@ -161,6 +166,7 @@ void InitialiseRender(int xres, int yres,
 void ExitRender(SDL_Window* win, SDL_GLContext glcontext)
 {
 	SDL_GL_DeleteContext(glcontext);
+	IMG_Quit();
     SDL_DestroyWindow(win);
 	SDL_Quit();
 }

@@ -110,8 +110,6 @@ int loadObj(char* file, float** vecs, float** uvs, float** normals) {
 		size_t size = strlen(line) - 1; //skip new line character
 		if(!size) continue;
 		
-		printf("%s", line);
-		
 		if(strstr(line, "v ") == line) {
 			loader.verts = loadVertex(line, loader.verts);
 			loader.verts[cvector_size(loader.verts) - 1] *= -1; //z fix

@@ -4,7 +4,7 @@
 #include "RenderGL.h"
 
 GLuint modelTex;
-GLuint modelCoordVBO, modelUVVBO;
+GLuint modelCoordVBO, modelUVVBO, modelPols;
 
 GLuint hudTex;
 GLuint rectCoordVBO, rectUVVBO;
@@ -37,17 +37,75 @@ void startGLRender(SDL_Surface* hud) {
 	hudTex = createTexture(hud->w, hud->h, 0, GL_RGBA);
 }
 
+void loadPreviewModel(char* mdl) {
+	cvector_vector_type(float) verts = {0};
+	cvector_vector_type(float) uvs = {0};
+	cvector_vector_type(float) norms = {0};
+	
+	int error = loadObj(mdl, &verts, &uvs, &norms);
+	if(error) return;
+	
+	glDeleteBuffers(1, &modelCoordVBO);
+	glDeleteBuffers(1, &modelUVVBO);
+	
+	modelCoordVBO = 0;
+	glGenBuffers(1, &modelCoordVBO); //Creates a VBO ID
+	glBindBuffer(GL_ARRAY_BUFFER, modelCoordVBO); //Loads the current VBO to store the data
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cvector_size(verts), verts, GL_STATIC_DRAW);
+	
+	modelUVVBO = 0;
+	glGenBuffers(1, &modelUVVBO); //Creates a VBO ID
+	glBindBuffer(GL_ARRAY_BUFFER, modelUVVBO); //Loads the current VBO to store the data
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cvector_size(uvs), uvs, GL_STATIC_DRAW);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+	modelPols = cvector_size(verts) / 3;
+	
+	cvector_free(verts);
+	cvector_free(uvs);
+	cvector_free(norms);
+}
+
+void loadPreviewTexture(char* tex) {
+	
+	SDL_Surface *image = IMG_Load(tex);
+	
+	if(tex) {
+		destroyTexture(modelTex);
+		modelTex = createTexture(image->w, image->h, image->pixels, GL_RGBA);
+		free(tex);
+	}
+}
+
 void destroyGLRender() {
+	glDeleteBuffers(1, &modelCoordVBO);
+	glDeleteBuffers(1, &modelUVVBO);
+	
 	glDeleteBuffers(1, &rectCoordVBO);
 	glDeleteBuffers(1, &rectUVVBO);
+	
 	destroyTexture(hudTex);
+	destroyTexture(modelTex);
 }
 
 void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
-	//2d mode
 	glViewport(0, 0, w, h);
-	
 	glEnable(GL_TEXTURE_2D);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	//3d mode
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	
+	glMatrixMode(GL_PROJECTION);
+	gluPerspective(70, (float)w / h, 1, 40000);
+	
+	drawMdl(modelTex);
+	
+	//2d mode
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	
@@ -55,16 +113,41 @@ void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	glLoadIdentity();
 	glOrtho(0, w, h, 0, 0, 40000);
 	
-	//just testing
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 	updateTexture(hudTex, hud->w, hud->h, hud->pixels, GL_RGBA);
 	
-	drawGLRect(hudTex, hudX, hudY, hud->w, hud->h, 1, 1, 1, 1);
+	//drawGLRect(hudTex, hudX, hudY, hud->w, hud->h, 1, 1, 1, 1);
 }
 
-void drawGLRect(GLenum tex, float x, float y, float w, float h, float r, float g, float b, float a) {
+void drawMdl(GLuint tex) {
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(0, 0, -400);
+	glRotatef(45, 0, 1, 0);
+	
+	if(tex) bindGLTex(tex, false, false);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, modelCoordVBO);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+        
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, modelUVVBO);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+        
+	glDrawArrays(GL_TRIANGLES, 0, modelPols);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	
+	if(tex) unbindGLTex(tex);
+    
+	glPopMatrix();
+}
+
+void drawGLRect(GLuint tex, float x, float y, float w, float h, float r, float g, float b, float a) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
