@@ -86,7 +86,7 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
                 tBox->textFRect.x -= 1;
 
             // Poll the keys
-            if (backspacePressed == 1 && tBox->curTextSize > 0)
+            if (backspacePressed == 1 && tBox->curTextSize > 0 && *(tBox->text + tBox->curTextSize) != '-')
             {
                 tBox->curTextSize--;
                 if (*(tBox->text + tBox->curTextSize) == '.')
@@ -98,6 +98,26 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
                     *(tBox->text + tBox->curTextSize) = '\0';
 
                 // Update the text texture
+                UpdateTextBoxTextTexture(renderer, tBox);
+            }
+            else if (lastChar == '-' && tBox->text[0] != '-')
+            {
+                for(int i = tBox->curTextSize; i > 0; i--)
+                {
+                    tBox->text[i] = tBox->text[i - 1];
+                }
+                tBox->curTextSize++;
+                tBox->text[0] = '-';
+                tBox->text[tBox->curTextSize] = '\0';
+                UpdateTextBoxTextTexture(renderer, tBox);
+            }
+            else if (lastChar == '+' && tBox->text[0] == '-')
+            {
+                for(int i = 0; i < tBox->curTextSize; i++)
+                {
+                    tBox->text[i] = tBox->text[i + 1];
+                }
+                tBox->curTextSize--;
                 UpdateTextBoxTextTexture(renderer, tBox);
             }
             else if (((lastChar <= 57 && lastChar >= 48) || (lastChar == '.' && tBox->hasADot == 0)) && tBox->curTextSize < TBOX_TEXT_LENGTH)
@@ -121,6 +141,13 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
             break;
     }
 
+}
+
+void UpdateTextBoxText(SDL_Renderer* renderer, TextBox* tBox, char* newText)
+{
+    tBox->text = strcpy(tBox->text, newText);
+    tBox->curTextSize = strlen(tBox->text);
+    UpdateTextBoxTextTexture(renderer, tBox);
 }
 
 void UpdateTextBoxTextTexture(SDL_Renderer* renderer, TextBox* tBox)

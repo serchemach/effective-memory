@@ -21,3 +21,4 @@ TextBox CreateTextBox(SDL_Renderer* renderer, int xPos, int yPos, int width, int
 void RenderTextBox(SDL_Renderer* renderer, TextBox tBox);
 void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mousePosY, int mouseLeftDown, char lastChar, int backspacePressed);
 void UpdateTextBoxTextTexture(SDL_Renderer* renderer, TextBox* tBox);
+void UpdateTextBoxText(SDL_Renderer* renderer, TextBox* tBox, char* newText);
