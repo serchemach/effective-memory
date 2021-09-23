@@ -3,6 +3,8 @@
 #include "SDL2/SDL.h"
 #include "SDL_TTF/SDL_ttf.h"
 #include "Button.h"
+#include "TextBox.h"
+#include "Utils.h"
 
 void startRender()
 {
@@ -10,12 +12,12 @@ void startRender()
     SDL_Window* win; SDL_Renderer* renderer;
     InitialiseRender(xres, yres, &win, &renderer);
 
-    char* sampleText = "*";
-    Button testButton = CreateButton(renderer, 10, 10, 100, 100, sampleText);
+    Button testButton = CreateButton(renderer, 10, 10, 100, 100, "1");
+    TextBox testTBox = CreateTextBox(renderer, 200, 200, 100, 60, "tBo134567");
 
     SDL_Event event;
 	int running = 1;
-    int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0;
+    int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0, lastKeyCode = 0;
     printf("123\n");
     while (running)
     {
@@ -23,6 +25,8 @@ void startRender()
         SDL_RenderClear(renderer);
         mouseLeftDown = 0;
         mouseLeftUp = 0;
+        lastKeyCode = 0;
+
         while (SDL_PollEvent(&event))
     	{
             switch (event.type)
@@ -42,10 +46,16 @@ void startRender()
                     if (event.button.button == SDL_BUTTON_LEFT)
                         mouseLeftUp = 1;
                     break;
+                case SDL_KEYDOWN:
+                    lastKeyCode = event.key.keysym.scancode;
+                    break;
             }
         }
         
         UpdateButton(&testButton, mousePosX, mousePosY, mouseLeftDown, mouseLeftUp);
+        UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode);
+
+        RenderTextBox(renderer, testTBox);
         RenderButton(renderer, &testButton);
 
         SDL_RenderPresent(renderer);

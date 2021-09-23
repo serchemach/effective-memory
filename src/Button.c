@@ -1,38 +1,38 @@
 #include "Button.h"
 #include "SDL_TTF/SDL_ttf.h"
 #include "stdio.h"
+#include "Utils.h"
 
 Button CreateButton(SDL_Renderer* renderer, int xPos, int yPos, int width, int height, char* text)
 {
     Button result;
-    result.rect.h = height; result.rect.w = width;
     result.rect.x = xPos; result.rect.y = yPos;
-    
+    result.rect.w = width; result.rect.h = height;
+
     result.isActive = 0;
     result.isPressed = 0;
     result.text = text;
     result.brightness = BASE_BRIGHTNESS;
     
-    SDL_Color textColor = {0, 0, 0};
-    TTF_Font* font = TTF_OpenFont("C:/windows/fonts/Calibri.ttf", min(width, height));
-    SDL_Surface* tSurf = TTF_RenderText_Blended(font, text, textColor);
+    result.textTexture = CreateTextTexture(renderer, min(height, width), text);
+    int tWidth, tHeight;
+    SDL_QueryTexture(result.textTexture, NULL, NULL, &tWidth, &tHeight);
 
-    if((float)tSurf->w / width > (float)tSurf->h / height)
+    if ((float)tWidth / width > (float)tHeight / height)
     {
         result.textRect.w = width;
-        result.textRect.h = (int)((float)(tSurf->h * width) / tSurf->w);
+        result.textRect.h = (int)((float)(tHeight * width) / tWidth);
         result.textRect.y = yPos + (height - result.textRect.h) / 2;
         result.textRect.x = xPos + (width - result.textRect.w) / 2;
     }
     else
     {
         result.textRect.h = height;
-        result.textRect.w = (int)((float)(tSurf->w * height) / tSurf->h);
+        result.textRect.w = (int)((float)(tWidth * height) / tHeight);
         result.textRect.x = xPos + (width - result.textRect.w) / 2;
         result.textRect.y = yPos + (height - result.textRect.h) / 2;
     }
 
-    result.textTexture = SDL_CreateTextureFromSurface(renderer, tSurf);
     return result;
 }
 
