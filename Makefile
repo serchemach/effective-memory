@@ -3,7 +3,7 @@ LIBS_PATH = lib
 SRC_PATH = src
 INCLUDE_PATH = include -Iinclude/SDL2
 #LIBS = $(patsubst %.a,-l%, $(notdir $(wildcard $(LIBS_PATH)/*.a)))
-LIBS = -lmingw32 -lSDL2main -lSDL2_ttf -lSDL2_image -lSDL2
+LIBS = -lmingw32 -lSDL2main -lSDL2_ttf -lSDL2_image -lSDL2 -opengl32 -lglu32
 
 CC = gcc
 LD = $(CC)

@@ -1,17 +1,22 @@
-#include "RenderGUI.h"
 #include "stdio.h"
+#include "string.h"
+
 #include "SDL2/SDL.h"
 #include "SDL_TTF/SDL_ttf.h"
+#include "SDL2/SDL_opengl.h"
+#include <GL/gl.h>
+
+#include "RenderGUI.h"
 #include "Button.h"
 #include "TextBox.h"
 #include "Utils.h"
-#include "string.h"
  
 void startRender()
 {
     int xres = 500, yres = 500;
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
-    InitialiseRender(xres, yres, &win, &renderer, &renderSurface, &windowSurface);
+	SDL_GLContext glcontext = (SDL_GLContext) {0};
+    InitialiseRender(xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
 
     int numberOfButtons = 10;
     Button guiButtons[numberOfButtons];
@@ -92,13 +97,21 @@ void startRender()
         SDL_UnlockSurface(windowSurface); SDL_UnlockSurface(renderSurface);
         
         SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
+		
+		//just testing
+		glClearColor(0,0,0,1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
         SDL_UpdateWindowSurface(win);
+		SDL_GL_SwapWindow(win);
     }   
 
-    ExitRender(win);
+    ExitRender(win, glcontext);
 }
 
-void InitialiseRender(int xres, int yres, SDL_Window** rWin, SDL_Renderer** rRenderer, SDL_Surface** rRenderSurface, SDL_Surface** rWindowSurface)
+void InitialiseRender(int xres, int yres, 
+	SDL_Window** rWin, SDL_Renderer** rRenderer, SDL_Surface** rRenderSurface, SDL_Surface** rWindowSurface, 
+	SDL_GLContext* rGlcontext)
 {
     // I'm sorry for this function
     if(TTF_Init() != 0)
@@ -107,7 +120,7 @@ void InitialiseRender(int xres, int yres, SDL_Window** rWin, SDL_Renderer** rRen
         exit(1);
     }
 
-    SDL_Window* win = SDL_CreateWindow("QuCalc", 100, 100, xres, yres, SDL_WINDOW_HIDDEN);
+    SDL_Window* win = SDL_CreateWindow("QuCalc", 100, 100, xres, yres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
     SDL_Surface* windowSurface = SDL_GetWindowSurface(win);
 
     SDL_Surface* renderSurface = SDL_CreateRGBSurfaceWithFormat(0, xres, yres, 32, SDL_PIXELFORMAT_RGBA32);
@@ -115,17 +128,23 @@ void InitialiseRender(int xres, int yres, SDL_Window** rWin, SDL_Renderer** rRen
     
     SDL_SetRenderDrawColor(renderer, BG_BRIGHTNESS, BG_BRIGHTNESS, BG_BRIGHTNESS, 255);
     SDL_RenderClear(renderer);
+	
+	SDL_GLContext glcontext = SDL_GL_CreateContext(win);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4);
 
     SDL_ShowWindow(win);
     SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
     SDL_UpdateWindowSurface(win);
+	
     *rWin = win; *rRenderer = renderer;
     *rRenderSurface = renderSurface; *rWindowSurface = windowSurface;
-
+	*rGlcontext = glcontext;
 }
  
-void ExitRender(SDL_Window* win)
+void ExitRender(SDL_Window* win, SDL_GLContext glcontext)
 {
+	SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(win);
 	SDL_Quit();
 }
