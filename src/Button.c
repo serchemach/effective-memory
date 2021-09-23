@@ -63,11 +63,11 @@ void UpdateButton(Button* button, int mousePosX, int mousePosY, int mouseLeftDow
     
     // Change button color according to state
     if (button->isPressed == 1 && button -> brightness > 80)
-        button->brightness -= 0.2;
+        button->brightness -= 1.5;
     else if (button->isActive == 1 && button->brightness > 100)
-        button->brightness -= 0.1;
+        button->brightness -= 1;
     else if (button->isActive == 1 && button->brightness < 100)
-        button->brightness += 0.2;
+        button->brightness += 1.5;
     else if (button->isActive == 0 && button->brightness < BASE_BRIGHTNESS)
-        button->brightness += 0.1;
+        button->brightness += 1;
 }

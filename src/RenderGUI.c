@@ -12,7 +12,6 @@ void startRender()
     int xres = 500, yres = 500;
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
     InitialiseRender(xres, yres, &win, &renderer, &renderSurface, &windowSurface);
-    SDL_Rect t = {0, 0, xres, yres};
 
     int numberOfButtons = 10;
     Button guiButtons[numberOfButtons];
@@ -90,6 +89,8 @@ void startRender()
         RenderTextBox(renderer, testTBox);
 
         // SDL_RenderPresent(renderer);
+        SDL_UnlockSurface(windowSurface); SDL_UnlockSurface(renderSurface);
+        
         SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
         SDL_UpdateWindowSurface(win);
     }   
@@ -119,7 +120,7 @@ void InitialiseRender(int xres, int yres, SDL_Window** rWin, SDL_Renderer** rRen
     SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
     SDL_UpdateWindowSurface(win);
     *rWin = win; *rRenderer = renderer;
-    *rRenderSurface = renderSurface; rWindowSurface = windowSurface;
+    *rRenderSurface = renderSurface; *rWindowSurface = windowSurface;
 
 }
  
