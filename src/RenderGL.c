@@ -101,7 +101,7 @@ void renderGL(struct Quaternion quat, int w, int h, SDL_Surface* hud, int hudX, 
 	
 	//3d mode
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	
 	glMatrixMode(GL_PROJECTION);
