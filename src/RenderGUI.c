@@ -133,6 +133,12 @@ void startRender()
                     break;
             }
         }
+
+        // Update quaternions
+        resultQuaternion = Quaternion_new(atof(resultQTextBoxes[0].text), atof(resultQTextBoxes[1].text), 
+            atof(resultQTextBoxes[2].text), atof(resultQTextBoxes[3].text));
+        additonalQuaternion = Quaternion_new(atof(additionalQTextBoxes[0].text), atof(additionalQTextBoxes[1].text), 
+            atof(additionalQTextBoxes[2].text), atof(additionalQTextBoxes[3].text));
         
         // Update the buttons and determine the active one
         for (int i = 0; i < numberOfButtons; ++i)
@@ -164,10 +170,6 @@ void startRender()
                 lastKeyCode = activeButton->text[0];
             else
             {
-                resultQuaternion = Quaternion_new(atof(resultQTextBoxes[0].text), atof(resultQTextBoxes[1].text), 
-                    atof(resultQTextBoxes[2].text), atof(resultQTextBoxes[3].text));
-                additonalQuaternion = Quaternion_new(atof(additionalQTextBoxes[0].text), atof(additionalQTextBoxes[1].text), 
-                    atof(additionalQTextBoxes[2].text), atof(additionalQTextBoxes[3].text));
                 switch(activeButton->text[0])
                 {
                     case '+':
