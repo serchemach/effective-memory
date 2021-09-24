@@ -119,7 +119,7 @@ void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	
 	updateTexture(hudTex, hud->w, hud->h, hud->pixels, GL_RGBA);
 	
-	//drawGLRect(hudTex, hudX, hudY, hud->w, hud->h, 1, 1, 1, 1);
+	drawGLRect(hudTex, hudX, hudY, hud->w, hud->h, 1, 1, 1, 1);
 }
 
 void drawMdl(GLuint tex) {

@@ -19,7 +19,7 @@ void startRender()
     int xres = 500, yres = 500;
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
 	SDL_GLContext glcontext = (SDL_GLContext) {0};
-    InitialiseRender(xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
+    InitialiseRender(xres * 2, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
 	
 	startGLRender(renderSurface);
 	loadPreviewModel("mdl.obj");
@@ -33,11 +33,12 @@ void startRender()
     TextBox additionalQTextBoxes[4];
     for (int i = 0; i < 4; ++i)
     {
-        resultQTextBoxes[i] = CreateTextBox(renderer, (int)((float)(i + 1)*xres / 16 + (float)i*xres/7),
-        (int)((float)yres / 20), (int)((float)xres/5), (int)((float)yres / 10), "0");
+        resultQTextBoxes[i] = CreateTextBox(renderer, (int)((float)i*xres / 200 + i*((float)(xres - (float)xres * 3 / 200)/4)),
+        (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4), (int)((float)yres / 10), "0");
 
-        additionalQTextBoxes[i] = CreateTextBox(renderer, (int)((float)(i + 1)*xres / 16 + (float)i*xres/7),
-        (int)((float)yres / 5), (int)((float)xres/5), (int)((float)yres / 10), "0");
+        additionalQTextBoxes[i] = CreateTextBox(renderer, (int)((float)i*xres / 200 + i*((float)(xres - (float)xres * 3 / 200)/4)),
+        (int)((float)yres / 200) + (int)((float)yres / 10) + (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4),
+        (int)((float)yres / 10), "0");
     }
     TextBox* activeTextBox = &resultQTextBoxes[0];
     resultQTextBoxes[0].isUsed = 1;
@@ -51,11 +52,11 @@ void startRender()
         char tempStr[2];
         tempStr[0] = 48 + i;
         tempStr[1] = '\0';
-        guiButtons[i] = CreateButton(renderer, (int)((float) ((i - 1) % 3 + 3) / 16 + (float)((i - 1) % 3) * xres * 11 / 64), 
+        guiButtons[i] = CreateButton(renderer, (int)((float)((i - 1) % 3 + 3) / 16 + (float)((i - 1) % 3) * xres * 11 / 64 + (xres - (float)3/16 - xres * 11 / 16)/2), 
         500 - (int)((float)((i - 1) / 3 + 2) / 16 + (float)((i - 1) / 3 + 2) * yres / 7),
         (float)xres * 11 / 64, (float)yres / 7, tempStr);
     }
-    guiButtons[0] = CreateButton(renderer, (int)((float) 4 / 16 + (float)xres * 11 / 64), 
+    guiButtons[0] = CreateButton(renderer, (int)((float) 4 / 16 + (float)xres * 11 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
         500 - (int)((float)2 / 16 + (float)yres / 7),
         (float)xres * 11 / 64, (float)yres / 7, "0");
     
@@ -66,20 +67,17 @@ void startRender()
         char tempStr[2];
         tempStr[0] = tString[i - 10];
         tempStr[1] = '\0';
-        guiButtons[i] = CreateButton(renderer, (int)((float)3 / 8 + (float)xres * 33 / 64), 
-            500 - (int)((float)((i - 10) + 2) / 16 + (float)(i - 9) * yres / 7), 
+        guiButtons[i] = CreateButton(renderer, (int)((float)3 / 8 + (float)xres * 33 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
+            500 - (int)((float)(i - 15) / 16 + (float)(i - 9) * yres / 7), 
             (float)xres * 11 / 64, (float)yres / 7, tempStr);
     }
-    guiButtons[14] = CreateButton(renderer, (int)((float) 6 / 16 + (float)xres * 11 / 32), 
+    guiButtons[14] = CreateButton(renderer, (int)((float) 6 / 16 + (float)xres * 11 / 32) + (xres - (float)3/16 - xres * 11 / 16)/2, 
             500 - (int)((float)2 / 16 + (float)yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, ".");
-    guiButtons[15] = CreateButton(renderer, (int)((float) 6 / 16), 
+    guiButtons[15] = CreateButton(renderer, (int)((float) 6 / 16) + (xres - (float)3/16 - xres * 11 / 16)/2, 
             500 - (int)((float)2 / 16 + (float)yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, "+-");
 
-
-    // Button testButton = CreateButton(renderer, 10, 10, 100, 100, "1");
-    //TextBox testTBox = CreateTextBox(renderer, 20, 20, 100, 60, "134567");
 
     SDL_Event event;
 	int running = 1;
@@ -123,9 +121,6 @@ void startRender()
             }
         }
         
-        // UpdateButton(&testButton, mousePosX, mousePosY, mouseLeftDown, mouseLeftUp);
-        // RenderButton(renderer, &testButton);
-
         // Update the buttons and determine the active one
         for (int i = 0; i < numberOfButtons; ++i)
         {
@@ -154,6 +149,10 @@ void startRender()
                 lastKeyCode = activeButton->text[0];
             else
             {
+                resultQuaternion = Quaternion_new(atof(resultQTextBoxes[0].text), atof(resultQTextBoxes[1].text), 
+                    atof(resultQTextBoxes[2].text), atof(resultQTextBoxes[3].text));
+                additonalQuaternion = Quaternion_new(atof(additionalQTextBoxes[0].text), atof(additionalQTextBoxes[1].text), 
+                    atof(additionalQTextBoxes[2].text), atof(additionalQTextBoxes[3].text));
                 switch(activeButton->text[0])
                 {
                     case '+':
@@ -189,14 +188,13 @@ void startRender()
 
         for (int i = 0; i < 4; ++i)
         {
+
             UpdateTextBox(renderer, &resultQTextBoxes[i], mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
             if (resultQTextBoxes[i].isUsed == 1 && activeTextBox != &resultQTextBoxes[i])
             {
                 activeTextBox->isUsed = 0;
                 activeTextBox = &resultQTextBoxes[i];
             }
-            if (activeButton != NULL && (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || activeButton->text[0] == '^'))
-                resultQTextBoxes[i].brightness += 3;
             RenderTextBox(renderer, resultQTextBoxes[i]);
 
             UpdateTextBox(renderer, &additionalQTextBoxes[i], mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
@@ -208,14 +206,12 @@ void startRender()
             RenderTextBox(renderer, additionalQTextBoxes[i]);
         }
 
-        // UpdateTextBox(renderer, &testTBox, mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
-        // RenderTextBox(renderer, testTBox);
 
         SDL_RenderPresent(renderer);
         //SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
 		
         SDL_LockSurface(renderSurface);
-		renderGL(xres, yres, renderSurface, 0, 0);
+		renderGL(xres * 2, yres, renderSurface, 0, 0);
         SDL_UnlockSurface(renderSurface);
 		
         //SDL_UpdateWindowSurface(win);
