@@ -207,15 +207,31 @@ void startRender(int res)
                     char tmp[50];
                     sprintf(tmp, "%g", resultQuaternion.x);
                     UpdateTextBoxText(renderer, &resultQTextBoxes[0], tmp);
+                    if (strchr(resultQTextBoxes[0].text, '.') == NULL)
+                        resultQTextBoxes[0].hasADot = 0;
+                    else 
+                        resultQTextBoxes[0].hasADot = 1;
 
                     sprintf(tmp, "%g", resultQuaternion.y);
                     UpdateTextBoxText(renderer, &resultQTextBoxes[1], tmp);
+                    if (strchr(resultQTextBoxes[1].text, '.') == NULL)
+                        resultQTextBoxes[1].hasADot = 0;
+                    else 
+                        resultQTextBoxes[1].hasADot = 1;
 
                     sprintf(tmp, "%g", resultQuaternion.z);
                     UpdateTextBoxText(renderer, &resultQTextBoxes[2], tmp);
+                    if (strchr(resultQTextBoxes[2].text, '.') == NULL)
+                        resultQTextBoxes[2].hasADot = 0;
+                    else
+                        resultQTextBoxes[2].hasADot = 1;
 
                     sprintf(tmp, "%g", resultQuaternion.w);
                     UpdateTextBoxText(renderer, &resultQTextBoxes[3], tmp);
+                    if (strchr(resultQTextBoxes[3].text, '.') == NULL)
+                        resultQTextBoxes[3].hasADot = 0;
+                    else
+                        resultQTextBoxes[3].hasADot = 1;
                 }
             }
         }
