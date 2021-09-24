@@ -137,7 +137,7 @@ void startRender()
         if(activeButton != NULL)
         {
             printf("%s\n", activeButton->text);
-            if (activeButton->text == "+-")
+            if (activeButton->text[0] == '+' && activeButton->text[1] == '-')
             {
                 if (activeTextBox->text[0] == '-')
                     lastKeyCode = '+';

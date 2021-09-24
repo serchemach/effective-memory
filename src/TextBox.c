@@ -91,7 +91,10 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
                     tBox->hasADot = 0;
 
                 if (tBox->curTextSize == 0)
-                    *(tBox->text + tBox->curTextSize) = ' ';
+                {
+                    *(tBox->text + tBox->curTextSize) = '0';
+                    tBox->curTextSize = 1;
+                }
                 else
                     *(tBox->text + tBox->curTextSize) = '\0';
 
@@ -123,10 +126,14 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
                 if(lastChar == '.')
                     tBox->hasADot = 1;
 
-                *(tBox->text + tBox->curTextSize) = lastChar;
-                tBox->curTextSize++;
-                *(tBox->text + tBox->curTextSize) = '\0';
-           
+                if (tBox->curTextSize == 1 && tBox->text[0] == '0')
+                    tBox->text[0] = lastChar;
+                else
+                {
+                    *(tBox->text + tBox->curTextSize) = lastChar;
+                    tBox->curTextSize++;
+                    *(tBox->text + tBox->curTextSize) = '\0';
+                }
                 // Update the text texture
                 UpdateTextBoxTextTexture(renderer, tBox);
             }
