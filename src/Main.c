@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    int res = 300;
+    int res = 500;
     if (argc == 2)
         res = atoi(argv[1]);
     startRender(res);
