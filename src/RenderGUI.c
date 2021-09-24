@@ -28,6 +28,7 @@ void startRender()
 
     struct Quaternion resultQuaternion = Quaternion_new(0, 0, 0, 1);
     struct Quaternion additonalQuaternion = Quaternion_new(0, 0, 0, 0);
+    struct Quaternion approximateQuaternion = Quaternion_new(0, 0, 0, 1);
 
     // Create textBoxes
     TextBox resultQTextBoxes[4];
@@ -247,7 +248,12 @@ void startRender()
         //SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
 		
         SDL_LockSurface(renderSurface);
-		renderGL(resultQuaternion, modelScale, xres * 2, yres, renderSurface, 0, 0);
+
+        approximateQuaternion.x += (-approximateQuaternion.x + resultQuaternion.x) / 11;
+        approximateQuaternion.y += (-approximateQuaternion.y + resultQuaternion.y) / 11;
+        approximateQuaternion.z += (-approximateQuaternion.z + resultQuaternion.z) / 11;
+        approximateQuaternion.w += (-approximateQuaternion.w + resultQuaternion.w) / 11;
+		renderGL(approximateQuaternion, modelScale, xres * 2, yres, renderSurface, 0, 0);
         SDL_UnlockSurface(renderSurface);
 		
         //SDL_UpdateWindowSurface(win);
