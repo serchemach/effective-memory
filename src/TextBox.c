@@ -128,6 +128,8 @@ void UpdateTextBox(SDL_Renderer* renderer, TextBox* tBox, int mousePosX, int mou
 
                 if (tBox->curTextSize == 1 && tBox->text[0] == '0')
                     tBox->text[0] = lastChar;
+                else if (tBox->curTextSize == 2 && tBox->text[1] == '0' && tBox->text[0] == '-')
+                    tBox->text[1] = lastChar;
                 else
                 {
                     *(tBox->text + tBox->curTextSize) = lastChar;
