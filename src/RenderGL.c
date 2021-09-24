@@ -93,7 +93,7 @@ void destroyGLRender() {
 }
 
 void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
-	glViewport(0, 0, w, h);
+	glViewport(hudX + hud->w, hudY, w - hud->w, h);
 	glEnable(GL_TEXTURE_2D);
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -105,17 +105,18 @@ void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(70, (float)w / h, 1, 40000);
+	gluPerspective(70, (float)(w - hud->w) / h, 1, 40000);
 	
 	drawMdl(modelTex);
 	
 	//2d mode
+	glViewport(hudX, hudY, hud->w, hud->h);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, w, h, 0, 0, 40000);
+	glOrtho(0, hud->w, hud->h, 0, 0, 40000);
 	
 	updateTexture(hudTex, hud->w, hud->h, hud->pixels, GL_RGBA);
 	
@@ -126,7 +127,7 @@ void drawMdl(GLuint tex) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glTranslatef(0, 0, -400);
+	glTranslatef(0, 0, -700);
 	glRotatef(40, 0, 1, 0);
 	
 	if(tex) bindGLTex(tex, false, false);

@@ -19,7 +19,7 @@ void startRender()
     int xres = 500, yres = 500;
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
 	SDL_GLContext glcontext = (SDL_GLContext) {0};
-    InitialiseRender(xres * 2, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
+    InitialiseRender(xres * 2, yres, xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
 	
 	startGLRender(renderSurface);
 	loadPreviewModel("mdl.obj");
@@ -222,7 +222,7 @@ void startRender()
     ExitRender(win, glcontext);
 }
 
-void InitialiseRender(int xres, int yres, 
+void InitialiseRender(int wxres, int wyres, int xres, int yres, 
 	SDL_Window** rWin, SDL_Renderer** rRenderer, SDL_Surface** rRenderSurface, SDL_Surface** rWindowSurface, 
 	SDL_GLContext* rGlcontext)
 {
@@ -247,7 +247,7 @@ void InitialiseRender(int xres, int yres,
 	
 	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
-    SDL_Window* win = SDL_CreateWindow("QuCalc", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, xres, yres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
+    SDL_Window* win = SDL_CreateWindow("QuCalc", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, wxres, wyres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	
 	SDL_GLContext glcontext = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, glcontext);
