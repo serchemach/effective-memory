@@ -25,7 +25,7 @@ void startRender()
 	loadPreviewModel("mdl.obj");
 	loadPreviewTexture("test.png");
 
-    struct Quaternion resultQuaternion = Quaternion_new(0, 0, 1, 0);
+    struct Quaternion resultQuaternion = Quaternion_new(0, 0, 0, 1);
     struct Quaternion additonalQuaternion = Quaternion_new(0, 0, 0, 0);
 
     // Create textBoxes
@@ -34,7 +34,7 @@ void startRender()
     for (int i = 0; i < 4; ++i)
     {
         resultQTextBoxes[i] = CreateTextBox(renderer, (int)((float)i*xres / 200 + i*((float)(xres - (float)xres * 3 / 200)/4)),
-        (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4), (int)((float)yres / 10), i==2?"1":"0");
+        (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4), (int)((float)yres / 10), i==3?"1":"0");
 
         additionalQTextBoxes[i] = CreateTextBox(renderer, (int)((float)i*xres / 200 + i*((float)(xres - (float)xres * 3 / 200)/4)),
         (int)((float)yres / 200) + (int)((float)yres / 10) + (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4),
