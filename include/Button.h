@@ -1,6 +1,6 @@
 #pragma once
 #include "SDL2/SDL.h"
-#define BASE_BRIGHTNESS 175.0f
+#define BASE_BRIGHTNESS 200.0f
 
 struct Button{
     SDL_Rect rect;

@@ -17,7 +17,7 @@
  
 void startRender()
 {
-    int xres = 500, yres = 500;
+    int xres = 300, yres = 300;
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
 	SDL_GLContext glcontext = (SDL_GLContext) {0};
     InitialiseRender(xres * 2, yres, xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
@@ -55,11 +55,11 @@ void startRender()
         tempStr[0] = 48 + i;
         tempStr[1] = '\0';
         guiButtons[i] = CreateButton(renderer, (int)((float)((i - 1) % 3 + 3) / 16 + (float)((i - 1) % 3) * xres * 11 / 64 + (xres - (float)3/16 - xres * 11 / 16)/2), 
-        500 - (int)((float)((i - 1) / 3 + 2) / 16 + (float)((i - 1) / 3 + 2) * yres / 7),
+        yres - (int)((float)((i - 1) / 3 + 2) / 16 + (float)((i - 1) / 3 + 2) * yres / 7),
         (float)xres * 11 / 64, (float)yres / 7, tempStr);
     }
     guiButtons[0] = CreateButton(renderer, (int)((float) 4 / 16 + (float)xres * 11 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
-        500 - (int)((float)2 / 16 + (float)yres / 7),
+        yres - (int)((float)2 / 16 + (float)yres / 7),
         (float)xres * 11 / 64, (float)yres / 7, "0");
     
     // Create operators
@@ -70,20 +70,20 @@ void startRender()
         tempStr[0] = tString[i - 10];
         tempStr[1] = '\0';
         guiButtons[i] = CreateButton(renderer, (int)((float)3 / 8 + (float)xres * 33 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
-            500 - (int)((float)(i - 15) / 16 + (float)(i - 9) * yres / 7), 
+            yres - (int)((float)(i - 15) / 16 + (float)(i - 9) * yres / 7), 
             (float)xres * 11 / 64, (float)yres / 7, tempStr);
     }
     guiButtons[14] = CreateButton(renderer, (int)((float) 6 / 16 + (float)xres * 11 / 32) + (xres - (float)3/16 - xres * 11 / 16)/2, 
-            500 - (int)((float)2 / 16 + (float)yres / 7),
+            yres - (int)((float)2 / 16 + (float)yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, ".");
     guiButtons[15] = CreateButton(renderer, (int)((float) 6 / 16) + (xres - (float)3/16 - xres * 11 / 16)/2, 
-            500 - (int)((float)2 / 16 + (float)yres / 7),
+            yres - (int)((float)2 / 16 + (float)yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, "+-");
     guiButtons[16] = CreateButton(renderer, (int)((float) 4 / 16 + (float)xres * 11 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
-            500 - (int)((float)(14 - 15) / 16 + (float)(14 - 9) * yres / 7),
+            yres - (int)((float)(14 - 15) / 16 + (float)(14 - 9) * yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, "~");
     guiButtons[17] = CreateButton(renderer, (int)((float)3 / 8 + (float)xres * 33 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
-            500 - (int)((float)(14 - 15) / 16 + (float)(14 - 9) * yres / 7),
+            yres - (int)((float)(14 - 15) / 16 + (float)(14 - 9) * yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, "<");
 
 

@@ -42,9 +42,17 @@ Button CreateButton(SDL_Renderer* renderer, int xPos, int yPos, int width, int h
 
 void RenderButton(SDL_Renderer* renderer, Button* button)
 {
-    SDL_SetRenderDrawColor(renderer, (int)button->brightness, (int)button->brightness, (int)button->brightness, 255);
-    SDL_RenderFillRect(renderer, &button->rect);
+    for(int y=0; y<button->rect.h; y++) {
+        int bright = (int)button->brightness;
+        bright -= (int) (bright * y / button->rect.h * 0.2f);
+        SDL_SetRenderDrawColor(renderer, bright, bright, bright, 255);
 
+        SDL_Rect tmprect = button->rect;
+        tmprect.y += y;
+        tmprect.h = 1;
+        SDL_RenderFillRect(renderer, &tmprect);
+    }
+    
     SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
     SDL_RenderDrawRect(renderer, &button->rect);
 

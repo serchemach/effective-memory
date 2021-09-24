@@ -31,8 +31,17 @@ TextBox CreateTextBox(SDL_Renderer* renderer, int xPos, int yPos, int width, int
 void RenderTextBox(SDL_Renderer* renderer, TextBox tBox)
 {
     // Draw the main body of tBox
-    SDL_SetRenderDrawColor(renderer, roundf(tBox.brightness), roundf(tBox.brightness), roundf(tBox.brightness), 255);
-    SDL_RenderFillRect(renderer, &tBox.rect);
+    
+    for(int y=0; y<tBox.rect.h; y++) {
+        int bright = roundf(tBox.brightness);
+        bright -= (int) ((1 - bright * y / tBox.rect.h) * 0.2f);
+        SDL_SetRenderDrawColor(renderer, bright, bright, bright, 255);
+
+        SDL_Rect tmprect = tBox.rect;
+        tmprect.y += y;
+        tmprect.h = 1;
+        SDL_RenderFillRect(renderer, &tmprect);
+    }
     
     // Draw the outline
     SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
