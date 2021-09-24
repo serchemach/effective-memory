@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "math.h"
 
 #include "GL/glew.h"
 #include "SDL2/SDL.h"
@@ -90,7 +91,8 @@ void startRender()
     SDL_Event event;
 	int running = 1;
     int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0, lastKeyCode = 0, backspacePressed = 0;
-    printf("123\n");
+	float modelScale = 1;
+	
     while (running)
     {
         SDL_SetRenderDrawColor(renderer, BG_BRIGHTNESS, BG_BRIGHTNESS, BG_BRIGHTNESS, 255);
@@ -118,6 +120,10 @@ void startRender()
                 case SDL_MOUSEBUTTONUP:
                     if (event.button.button == SDL_BUTTON_LEFT)
                         mouseLeftUp = 1;
+                    break;
+                case SDL_MOUSEWHEEL:
+                    modelScale /= pow(1.1, event.wheel.y);
+					if(modelScale < 0.0001) modelScale = 0.0001;
                     break;
                 case SDL_TEXTINPUT:
                     lastKeyCode = event.text.text[0];
@@ -241,7 +247,7 @@ void startRender()
         //SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
 		
         SDL_LockSurface(renderSurface);
-		renderGL(resultQuaternion, xres * 2, yres, renderSurface, 0, 0);
+		renderGL(resultQuaternion, modelScale, xres * 2, yres, renderSurface, 0, 0);
         SDL_UnlockSurface(renderSurface);
 		
         //SDL_UpdateWindowSurface(win);
