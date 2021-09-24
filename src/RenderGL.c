@@ -4,7 +4,7 @@
 #include "RenderGL.h"
 
 GLuint modelTex;
-GLuint modelCoordVBO, modelUVVBO, modelPols;
+GLuint modelCoordVBO, modelUVVBO, modelVerts;
 
 GLuint hudTex;
 GLuint rectCoordVBO, rectUVVBO;
@@ -60,7 +60,7 @@ void loadPreviewModel(char* mdl) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
-	modelPols = cvector_size(verts) / 3;
+	modelVerts = cvector_size(verts) / 3;
 	
 	cvector_free(verts);
 	cvector_free(uvs);
@@ -71,10 +71,13 @@ void loadPreviewTexture(char* tex) {
 	
 	SDL_Surface *image = IMG_Load(tex);
 	
-	if(tex) {
-		destroyTexture(modelTex);
-		modelTex = createTexture(image->w, image->h, image->pixels, GL_RGBA);
-		free(tex);
+	if(image) {
+		SDL_LockSurface(image);
+		if(image->format->format == SDL_PIXELFORMAT_RGB888 || image->format->format == SDL_PIXELFORMAT_RGBA8888 || image->format->format == SDL_PIXELFORMAT_RGBA32) {
+			destroyTexture(modelTex);
+			modelTex = createTexture(image->w, image->h, image->pixels, image->format->format == SDL_PIXELFORMAT_RGB888?GL_RGB:GL_RGBA);
+		}
+		SDL_FreeSurface(image);
 	}
 }
 
@@ -97,10 +100,11 @@ void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	
 	//3d mode
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	
 	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 	gluPerspective(70, (float)w / h, 1, 40000);
 	
 	drawMdl(modelTex);
@@ -123,7 +127,7 @@ void drawMdl(GLuint tex) {
 	glPushMatrix();
 	glLoadIdentity();
 	glTranslatef(0, 0, -400);
-	glRotatef(45, 0, 1, 0);
+	glRotatef(40, 0, 1, 0);
 	
 	if(tex) bindGLTex(tex, false, false);
 	
@@ -135,7 +139,7 @@ void drawMdl(GLuint tex) {
 	glBindBuffer(GL_ARRAY_BUFFER, modelUVVBO);
 	glTexCoordPointer(2, GL_FLOAT, 0, 0);
         
-	glDrawArrays(GL_TRIANGLES, 0, modelPols);
+	glDrawArrays(GL_TRIANGLES, 0, modelVerts);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	

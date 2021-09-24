@@ -23,7 +23,7 @@ void startRender()
 	
 	startGLRender(renderSurface);
 	loadPreviewModel("mdl.obj");
-	loadPreviewTexture("test.gif");
+	loadPreviewTexture("test.png");
 
     struct Quaternion resultQuaternion = Quaternion_new(0, 0, 0, 0);
     struct Quaternion additonalQuaternion = Quaternion_new(0, 0, 0, 0);

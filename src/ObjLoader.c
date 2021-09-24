@@ -14,12 +14,12 @@ typedef struct {
 	cvector_vector_type(float) modelNormals;
 } Loader;
 
-cvector_vector_type(float) loadVertex(char* line, cvector_vector_type(float) list) {
+cvector_vector_type(float) loadVertex(char* line, cvector_vector_type(float) list, size_t attribs) {
 	char* token = strtok(line, " ");
 	size_t tokens = 0;
 	
     while(token) {
-        if(tokens > 0) cvector_push_back(list, (float) atof(token));
+        if(tokens > 0 && tokens-1 < attribs) cvector_push_back(list, (float) atof(token));
         token = strtok(NULL, " ");
 		tokens++;
     }
@@ -111,13 +111,13 @@ int loadObj(char* file, float** vecs, float** uvs, float** normals) {
 		if(!size) continue;
 		
 		if(strstr(line, "v ") == line) {
-			loader.verts = loadVertex(line, loader.verts);
+			loader.verts = loadVertex(line, loader.verts, 3);
 			loader.verts[cvector_size(loader.verts) - 1] *= -1; //z fix
 		} else if(strstr(line, "vt ") == line) {
-			loader.uvs = loadVertex(line, loader.uvs);
+			loader.uvs = loadVertex(line, loader.uvs, 2);
 			loader.uvs[cvector_size(loader.uvs) - 1] = 1 - loader.uvs[cvector_size(loader.uvs) - 1]; //v tex coord fix
 		} else if(strstr(line, "vn ") == line) {
-			loader.norms = loadVertex(line, loader.norms);
+			loader.norms = loadVertex(line, loader.norms, 3);
 		} else if(strstr(line, "f ") == line) {
 			loadFace(line, &loader);
 		}
