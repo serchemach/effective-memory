@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "RenderGL.h"
+#include "RenderGUI.h"
 
 GLuint modelTex;
 GLuint modelCoordVBO, modelUVVBO, modelVerts;
@@ -95,7 +96,7 @@ void destroyGLRender() {
 void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	glViewport(hudX + hud->w, hudY, w - hud->w, h);
 	glEnable(GL_TEXTURE_2D);
-	glClearColor(0, 0, 0, 1);
+	glClearColor(BG_BRIGHTNESS_3D / 255.f, BG_BRIGHTNESS_3D / 255.f, BG_BRIGHTNESS_3D / 255.f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	//3d mode

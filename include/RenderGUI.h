@@ -1,6 +1,7 @@
 #pragma once
 #include "SDL2/SDL.h"
-#define BG_BRIGHTNESS 75
+#define BG_BRIGHTNESS 119
+#define BG_BRIGHTNESS_3D 51
 
 
 void startRender();
