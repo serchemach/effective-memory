@@ -128,6 +128,12 @@ void startRender()
                     break;
                 case SDL_DROPFILE:
                     droppedFileDir = event.drop.file;
+					
+					size_t len = strlen(droppedFileDir);
+					if(len >= 4 && !strcmp(droppedFileDir + len - 4, ".obj")) {
+						loadPreviewModel(droppedFileDir);
+					} else loadPreviewTexture(droppedFileDir);
+					
                     printf("%s\n", droppedFileDir);
                     free(droppedFileDir);
                     break;
