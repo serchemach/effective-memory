@@ -139,9 +139,9 @@ void drawMdl(struct Quaternion quat, GLuint tex, GLuint posVBO, GLuint uvVBO, GL
 	glMat[9] = rotMat[2][1];
 	glMat[13] = 0; //y offset
 	
-	glMat[2] = rotMat[0][1];
-	glMat[6] = rotMat[1][1];
-	glMat[10] = rotMat[2][1];
+	glMat[2] = rotMat[0][2];
+	glMat[6] = rotMat[1][2];
+	glMat[10] = rotMat[2][2];
 	glMat[14] = -700; //z offset
 	
 	glMat[15] = 1; //w
