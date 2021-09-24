@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <math.h>
 
 #include "GL/glew.h"
 #include "SDL2/SDL.h"
@@ -10,6 +11,7 @@
 #include <GL/glext.h>
 #include <GL/glu.h>
 
+#include "RenderGUI.h"
 #include "ObjLoader.h"
 #include "quaternion.h"
 

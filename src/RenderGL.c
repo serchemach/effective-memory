@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "RenderGL.h"
-#include "RenderGUI.h"
 
 GLuint modelTex;
 GLuint modelCoordVBO, modelUVVBO, modelVerts;
@@ -126,6 +125,7 @@ void renderGL(struct Quaternion quat, int w, int h, SDL_Surface* hud, int hudX, 
 
 void drawMdl(struct Quaternion quat, GLuint tex, GLuint posVBO, GLuint uvVBO, GLsizei verts) {
 	float rotMat[3][3] = {0};
+	quat = Quaternion_divScalar(quat, sqrtf(quat.x*quat.x + quat.y*quat.y + quat.z*quat.z + quat.w*quat.w));
 	Quaternion_toRotationMatrix(quat, rotMat);
 	
 	float glMat[16] = {0};
