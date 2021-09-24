@@ -11,6 +11,7 @@
 #include <GL/glu.h>
 
 #include "ObjLoader.h"
+#include "quaternion.h"
 
 #include "cvector.h"
 
@@ -20,9 +21,9 @@ void destroyGLRender();
 void loadPreviewModel(char* mdl);
 void loadPreviewTexture(char* tex);
 
-void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY);
+void renderGL(struct Quaternion quat, int w, int h, SDL_Surface* hud, int hudX, int hudY);
 
-void drawMdl(GLuint tex);
+void drawMdl(struct Quaternion quat, GLuint tex, GLuint posVBO, GLuint uvVBO, GLsizei verts);
 void drawGLRect(GLuint tex, float x, float y, float w, float h, float r, float g, float b, float a);
 
 GLuint createTexture(int w, int h, void* data, GLenum format);

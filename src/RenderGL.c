@@ -93,7 +93,7 @@ void destroyGLRender() {
 	destroyTexture(modelTex);
 }
 
-void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
+void renderGL(struct Quaternion quat, int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	glViewport(hudX + hud->w, hudY, w - hud->w, h);
 	glEnable(GL_TEXTURE_2D);
 	glClearColor(BG_BRIGHTNESS_3D / 255.f, BG_BRIGHTNESS_3D / 255.f, BG_BRIGHTNESS_3D / 255.f, 1);
@@ -108,7 +108,7 @@ void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	glLoadIdentity();
 	gluPerspective(70, (float)(w - hud->w) / h, 1, 40000);
 	
-	drawMdl(modelTex);
+	drawMdl(quat, modelTex, modelCoordVBO, modelUVVBO, modelVerts);
 	
 	//2d mode
 	glViewport(hudX, hudY, hud->w, hud->h);
@@ -124,24 +124,44 @@ void renderGL(int w, int h, SDL_Surface* hud, int hudX, int hudY) {
 	drawGLRect(hudTex, hudX, hudY, hud->w, hud->h, 1, 1, 1, 1);
 }
 
-void drawMdl(GLuint tex) {
+void drawMdl(struct Quaternion quat, GLuint tex, GLuint posVBO, GLuint uvVBO, GLsizei verts) {
+	float rotMat[3][3] = {0};
+	Quaternion_toRotationMatrix(quat, rotMat);
+	
+	float glMat[16] = {0};
+	glMat[0] = rotMat[0][0];
+	glMat[4] = rotMat[1][0];
+	glMat[8] = rotMat[2][0];
+	glMat[12] = 0; //x offset
+	
+	glMat[1] = rotMat[0][1];
+	glMat[5] = rotMat[1][1];
+	glMat[9] = rotMat[2][1];
+	glMat[13] = 0; //y offset
+	
+	glMat[2] = rotMat[0][1];
+	glMat[6] = rotMat[1][1];
+	glMat[10] = rotMat[2][1];
+	glMat[14] = -700; //z offset
+	
+	glMat[15] = 1; //w
+	
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glTranslatef(0, 0, -700);
-	glRotatef(40, 0, 1, 0);
+	glLoadMatrixf(glMat);
 	
 	if(tex) bindGLTex(tex, false, false);
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, modelCoordVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, posVBO);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
         
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, modelUVVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, uvVBO);
 	glTexCoordPointer(2, GL_FLOAT, 0, 0);
         
-	glDrawArrays(GL_TRIANGLES, 0, modelVerts);
+	glDrawArrays(GL_TRIANGLES, 0, verts);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	

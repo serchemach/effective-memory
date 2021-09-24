@@ -25,7 +25,7 @@ void startRender()
 	loadPreviewModel("mdl.obj");
 	loadPreviewTexture("test.png");
 
-    struct Quaternion resultQuaternion = Quaternion_new(0, 0, 0, 0);
+    struct Quaternion resultQuaternion = Quaternion_new(0, 0, 0, 1);
     struct Quaternion additonalQuaternion = Quaternion_new(0, 0, 0, 0);
 
     // Create textBoxes
@@ -233,7 +233,7 @@ void startRender()
         //SDL_BlitSurface(renderSurface, NULL, windowSurface, NULL);
 		
         SDL_LockSurface(renderSurface);
-		renderGL(xres * 2, yres, renderSurface, 0, 0);
+		renderGL(resultQuaternion, xres * 2, yres, renderSurface, 0, 0);
         SDL_UnlockSurface(renderSurface);
 		
         //SDL_UpdateWindowSurface(win);
