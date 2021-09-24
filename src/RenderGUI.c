@@ -34,7 +34,7 @@ void startRender()
     for (int i = 0; i < 4; ++i)
     {
         resultQTextBoxes[i] = CreateTextBox(renderer, (int)((float)i*xres / 200 + i*((float)(xres - (float)xres * 3 / 200)/4)),
-        (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4), (int)((float)yres / 10), "0");
+        (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4), (int)((float)yres / 10), i==3?"1":"0");
 
         additionalQTextBoxes[i] = CreateTextBox(renderer, (int)((float)i*xres / 200 + i*((float)(xres - (float)xres * 3 / 200)/4)),
         (int)((float)yres / 200) + (int)((float)yres / 10) + (int)((float)yres / 200), (int)((float)(xres - (float)xres * 3 / 200)/4),
