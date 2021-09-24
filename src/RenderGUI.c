@@ -188,13 +188,16 @@ void startRender()
 
         for (int i = 0; i < 4; ++i)
         {
-
             UpdateTextBox(renderer, &resultQTextBoxes[i], mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
             if (resultQTextBoxes[i].isUsed == 1 && activeTextBox != &resultQTextBoxes[i])
             {
                 activeTextBox->isUsed = 0;
                 activeTextBox = &resultQTextBoxes[i];
             }
+            if (activeButton != NULL && (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || 
+                activeButton->text[0] == '^'))
+                resultQTextBoxes[i].brightness -= 30;
+                
             RenderTextBox(renderer, resultQTextBoxes[i]);
 
             UpdateTextBox(renderer, &additionalQTextBoxes[i], mousePosX, mousePosY, mouseLeftDown, lastKeyCode, backspacePressed);
