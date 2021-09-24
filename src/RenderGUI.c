@@ -15,9 +15,9 @@
 #include "Utils.h"
 #include "quaternion.h"
  
-void startRender()
+void startRender(int res)
 {
-    int xres = 300, yres = 300;
+    int xres = res, yres = res;
     SDL_Window* win; SDL_Renderer* renderer; SDL_Surface* windowSurface; SDL_Surface* renderSurface;
 	SDL_GLContext glcontext = (SDL_GLContext) {0};
     InitialiseRender(xres * 2, yres, xres, yres, &win, &renderer, &renderSurface, &windowSurface, &glcontext);
