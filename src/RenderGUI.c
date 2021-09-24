@@ -44,7 +44,7 @@ void startRender()
     resultQTextBoxes[0].isUsed = 1;
 
     Button* activeButton = NULL;
-    int numberOfButtons = 16;
+    int numberOfButtons = 18;
     Button guiButtons[numberOfButtons];
     // Create digits
     for (int i = 1; i < 10; ++i)
@@ -77,8 +77,16 @@ void startRender()
     guiButtons[15] = CreateButton(renderer, (int)((float) 6 / 16) + (xres - (float)3/16 - xres * 11 / 16)/2, 
             500 - (int)((float)2 / 16 + (float)yres / 7),
             (float)xres * 11 / 64, (float)yres / 7, "+-");
+    guiButtons[16] = CreateButton(renderer, (int)((float) 4 / 16 + (float)xres * 11 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
+            500 - (int)((float)(14 - 15) / 16 + (float)(14 - 9) * yres / 7),
+            (float)xres * 11 / 64, (float)yres / 7, "~");
+    guiButtons[17] = CreateButton(renderer, (int)((float)3 / 8 + (float)xres * 33 / 64) + (xres - (float)3/16 - xres * 11 / 16)/2, 
+            500 - (int)((float)(14 - 15) / 16 + (float)(14 - 9) * yres / 7),
+            (float)xres * 11 / 64, (float)yres / 7, "<");
 
 
+    SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+    char* droppedFileDir = NULL;
     SDL_Event event;
 	int running = 1;
     int mousePosX = 0, mousePosY = 0, mouseLeftDown = 0, mouseLeftUp = 0, lastKeyCode = 0, backspacePressed = 0;
@@ -118,6 +126,11 @@ void startRender()
                     if (event.key.keysym.sym == SDLK_BACKSPACE)
                         backspacePressed = 1;
                     break;
+                case SDL_DROPFILE:
+                    droppedFileDir = event.drop.file;
+                    printf("%s\n", droppedFileDir);
+                    free(droppedFileDir);
+                    break;
             }
         }
         
@@ -137,7 +150,9 @@ void startRender()
         if(activeButton != NULL)
         {
             printf("%s\n", activeButton->text);
-            if (activeButton->text[0] == '+' && activeButton->text[1] == '-')
+            if (activeButton->text[0] == '<')
+                backspacePressed = 1;
+            else if (activeButton->text[0] == '+' && activeButton->text[1] == '-')
             {
                 if (activeTextBox->text[0] == '-')
                     lastKeyCode = '+';
@@ -167,8 +182,12 @@ void startRender()
                     case '^':
                         resultQuaternion = Quaternion_exp(resultQuaternion);
                         break;
+                    case '~':
+                        resultQuaternion = Quaternion_conj(resultQuaternion);
+                        break;
                 }
-                if (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || activeButton->text[0] == '^')
+                if (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || activeButton->text[0] == '^' ||
+                    activeButton->text[0] == '~')
                 {
                     char tmp[50];
                     sprintf(tmp, "%g", resultQuaternion.x);
@@ -195,7 +214,7 @@ void startRender()
                 activeTextBox = &resultQTextBoxes[i];
             }
             if (activeButton != NULL && (activeButton->text[0] == '+' || activeButton->text[0] == '-' || activeButton->text[0] == '*' || 
-                activeButton->text[0] == '^'))
+                activeButton->text[0] == '^' || activeButton->text[0] == '~'))
                 resultQTextBoxes[i].brightness -= 30;
                 
             RenderTextBox(renderer, resultQTextBoxes[i]);
