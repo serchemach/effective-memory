@@ -37,15 +37,17 @@ void Quaternion_toRotationMatrix(struct Quaternion quaternion, float rotationmat
   float z_pow = pow(z, 2);
   float w_pow = pow(w, 2);
   
-  rotationmatrix[0][0] = 2*(w_pow + x_pow) - 1;
+  rotationmatrix[0][0] = 1 - 2*(y_pow + z_pow);
   rotationmatrix[1][0] = 2*(x*y - w*z);
   rotationmatrix[2][0] = 2*(x*z + w*y);
+  
   rotationmatrix[0][1] = 2*(x*y + w*z);
-  rotationmatrix[1][1] = 2*(w_pow + y_pow) - 1;
+  rotationmatrix[1][1] = 1 - 2*(x_pow + z_pow);
   rotationmatrix[2][1] = 2*(y*z - w*x);
+  
   rotationmatrix[0][2] = 2*(x*z - w*y);
   rotationmatrix[1][2] = 2*(y*z + w*x);
-  rotationmatrix[2][2] = 2*(w_pow + z_pow) - 1;
+  rotationmatrix[2][2] = 1 - 2*(x_pow + y_pow);
 }
 
 struct Quaternion Quaternion_addQuaternion(struct Quaternion quaternion_1, struct Quaternion quaternion_2)

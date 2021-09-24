@@ -112,7 +112,6 @@ int loadObj(char* file, float** vecs, float** uvs, float** normals) {
 		
 		if(strstr(line, "v ") == line) {
 			loader.verts = loadVertex(line, loader.verts, 3);
-			loader.verts[cvector_size(loader.verts) - 1] *= -1; //z fix
 		} else if(strstr(line, "vt ") == line) {
 			loader.uvs = loadVertex(line, loader.uvs, 2);
 			loader.uvs[cvector_size(loader.uvs) - 1] = 1 - loader.uvs[cvector_size(loader.uvs) - 1]; //v tex coord fix
